@@ -1,0 +1,44 @@
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BMP280.h>
+
+// Create BMP280 object
+Adafruit_BMP280 bmp; 
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();  // Nano: SDA=A4, SCL=A5
+
+  Serial.println(F("Initializing BMP280..."));
+  if (!bmp.begin(0x76)) {  // 0x76 is default if CSB = GND
+    Serial.println(F("Could not find a valid BMP280 sensor, check wiring!"));
+    while (1); // Stop if sensor not found
+  }
+  Serial.println(F("BMP280 sensor initialized ✅"));
+}
+
+void loop() {
+  // Read temperature in °C
+  float temp = bmp.readTemperature();
+  
+  // Read pressure in Pa
+  float pressure = bmp.readPressure();
+  
+  // Calculate altitude (optional, assuming sea level pressure = 1013.25 hPa)
+  float altitude = bmp.readAltitude(1013.25);
+
+  Serial.print(F("Temperature: "));
+  Serial.print(temp);
+  Serial.println(F(" °C"));
+
+  Serial.print(F("Pressure: "));
+  Serial.print(pressure / 100.0F);  // Convert Pa → hPa
+  Serial.println(F(" hPa"));
+
+  Serial.print(F("Altitude: "));
+  Serial.print(altitude);
+  Serial.println(F(" m"));
+
+  Serial.println("-----------------------------");
+  delay(1000);
+}
